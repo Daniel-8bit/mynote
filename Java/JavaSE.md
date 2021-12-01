@@ -1,12 +1,63 @@
-## HashMap实现
+# Java基础
 
-### 问题
+## 数据类型
 
-1. 数据结构：数组+链表+红黑树，什么时候转红黑树
-2. put
-3. get
-4. 相同hash值，元素添加到链表的尾部还是头部
-5. 1.8是尾插法.还有链表长度大于8且桶容量大于64才转成红黑树，而且节点数是少于6才由红黑树转为链表，而不是文中说的链表长度大于8转红黑树，小于8转链表
+### 包装类型
 
-## Comparator
+自动装箱
 
+自动拆箱
+
+int 与 Integer
+
+### 缓存池
+
+new Integer(1)每次都会新建一个对象
+
+Integer.valueOf(1)会使用缓存池中的对象
+
+valueOf的使用方法
+
+缓存池上下限
+
+
+
+## 类和对象
+
+### 创建对象的方式
+
++ new关键字
++ Class.newInstace
++ Constructor.newInstance
++ Clone
++ 反序列化
+
+## 反射
+
+Class 和 java.lang.reflect
+
+优点：
+
++ 可扩展性
++ 类浏览器和可视化开发环境
++ 调试器和测试工具
+
+缺点
+
++ 性能开销
++ 安全限制
++ 内部暴露
+
+
+
+### 动态代理
+
+微商—代理类
+
+厂家—委托类
+
+
+
+## 注解
+
+https://www.cnblogs.com/acm-bingzi/p/javaAnnotation.html

@@ -508,6 +508,320 @@ Expression Language
 
 ### sendRedirect（请求重定向）
 
+https://www.cnblogs.com/duanwandao/p/9855229.html
+
+### Cookies
+
+概念：Http是一种无状态的协议，Cookie是服务器改善到用户浏览器并保存在本地的一小块数据，会在浏览器下次向同一服务器再发起请求时被携带并发送到服务器上。
+
+应用：
+
++ 会话状态管理（如用户登录状态/购物车/游戏分数或其它需要记录的信息）
++ 个性化设置（如用户自定义设置/主题等）
++ 浏览器行为跟踪（如跟踪分析用户行为等）
+
+构造器：
+
+```java
+Cookie(String name, String value)
+	Construct a cookie with a specified name and value
+```
+
+常用方法：
+
+Cookie没有setName()和setValue()方法
+
+| 序号 | 方法 & 描述                                                  |
+| :--- | :----------------------------------------------------------- |
+| 1    | **public void setDomain(String pattern)** 该方法设置 cookie 适用的域，例如 w3cschool.cn。 |
+| 2    | **public String getDomain()** 该方法获取 cookie 适用的域，例如 w3cschool.cn。 |
+| 3    | **public void setMaxAge(int expiry)** 该方法设置 cookie 过期的时间（以秒为单位）。如果不这样设置，cookie 只会在当前 session 会话中持续有效。 |
+| 4    | **public int getMaxAge()** 该方法返回 cookie 的最大生存周期（以秒为单位），默认情况下，-1 表示 cookie 将持续下去，直到浏览器关闭。 |
+| 5    | **public String getName()** 该方法返回 cookie 的名称。名称在创建后不能改变。 |
+| 6    | **public void setValue(String newValue)** 该方法设置与 cookie 关联的值。 |
+| 7    | **public String getValue()** 该方法获取与 cookie 关联的值。  |
+| 8    | **public void setPath(String uri)** 该方法设置 cookie 适用的路径。如果您不指定路径，与当前页面相同目录下的（包括子目录下的）所有 URL 都会返回 cookie。 |
+| 9    | **public String getPath()** 该方法获取 cookie 适用的路径。   |
+| 10   | **public void setSecure(boolean flag)** 该方法设置布尔值，表示 cookie 是否应该只在加密的（即 SSL）连接上发送。 |
+| 11   | **public void setComment(String purpose)** 该方法规定了描述 cookie 目的的注释。该注释在浏览器向用户呈现 cookie 时非常有用。 |
+| 12   | **public String getComment()** 该方法返回了描述 cookie 目的的注释，如果 cookie 没有注释则返回 null。 |
+
+[Document of javax.servlet.http.Cookie](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/#:~:text=%EE%80%80Servlet%20API%EE%80%81%20Documentation.%20The%20javax.%EE%80%80servlet%EE%80%81%20package%20contains%20a,such%20a%20class%20by%20a%20conforming%20%EE%80%80servlet%EE%80%81%20container.)
+
+
+
+```java
+ //为firstname和lastname创建cookies
+        Cookie firstName = new Cookie("first_name",req.getParameter("first_name"));
+        Cookie lastName = new Cookie("last_name", req.getParameter("last_name"));
+
+        // 为cookies设置最大保存时间
+        firstName.setMaxAge(60*60*24);
+        lastName.setMaxAge(60*60*24);
+
+        //在响应头添加两个cookies
+        resp.addCookie(firstName);
+        resp.addCookie(lastName);
+
+
+// 获取cookie的方法
+		Cookie[] cookies = null;
+
+        cookies = req.getCookies();
+
+        resp.setContentType("text/html; charset=utf-8");
+
+        PrintWriter out = resp.getWriter();
+
+        if(cookies != null){
+            out.println("<h2>cookies名称和值</h2>");
+            for (int i = 0; i < cookies.length; i++) {
+                out.println("name: " + cookies[i].getName() +
+                        ", " + "value: " + cookies[i].getValue() +
+                        "<br/>"
+                );
+            }
+        }
+        else{
+            out.println(
+                    "<h2> not found!</h2>"
+            );
+        }
+
+```
+
+
+
+### Session
+
+Http是一种“无状态”协议，这意味着每次客户端检索网页时，客户端打开一个单独的连接到Web服务器，服务器不会保留之前客户端请求的任何记录
+
+HttpSession方法：
+
+| 序号 | 方法 & 描述                                                  |
+| :--- | :----------------------------------------------------------- |
+| 1    | **public Object getAttribute(String name)** 该方法返回在该 session 会话中具有指定名称的对象，如果没有指定名称的对象，则返回 null。 |
+| 2    | **public Enumeration getAttributeNames()** 该方法返回 String 对象的枚举，String 对象包含所有绑定到该 session 会话的对象的名称。 |
+| 3    | **public long getCreationTime()** 该方法返回该 session 会话被创建的时间，自格林尼治标准时间 1970 年 1 月 1 日午夜算起，以毫秒为单位。 |
+| 4    | **public String getId()** 该方法返回一个包含分配给该 session 会话的唯一标识符的字符串。 |
+| 5    | **public long getLastAccessedTime()** 该方法返回客户端最后一次发送与该 session 会话相关的请求的时间自格林尼治标准时间 1970 年 1 月 1 日午夜算起，以毫秒为单位。 |
+| 6    | **public int getMaxInactiveInterval()** 该方法返回 Servlet 容器在客户端访问时保持 session 会话打开的最大时间间隔，以秒为单位。 |
+| 7    | **public void invalidate()** 该方法指示该 session 会话无效，并解除绑定到它上面的任何对象。 |
+| 8    | **public boolean isNew(** 如果客户端还不知道该 session 会话，或者如果客户选择不参入该 session 会话，则该方法返回 true。 |
+| 9    | **public void removeAttribute(String name)** 该方法将从该 session 会话移除指定名称的对象。 |
+| 10   | **public void setAttribute(String name, Object value)** 该方法使用指定的名称绑定一个对象到该 session 会话。 |
+| 11   | **public void setMaxInactiveInterval(int interval)** 该方法在 Servlet 容器指示该 session 会话无效之前，指定客户端请求之间的时间，以秒为单位。 |
+
+在HttpServletRequest类中，有关session创建的两个方法：
+
+```java
+getSession():Returns the current session associated with this request, or if the request does not have a session, creates one.
+
+getSession(boolean create):Returns the current HttpSession associated with this request or, if there is no current session and create is true, returns a new session.
+
+```
+
+Session跟踪实例：
+
+```java
+@WebServlet("/sessiontest")
+public class SessionTest extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+
+        Date creatTime = new Date(session.getCreationTime());
+
+        Date lastAccessTime = new Date(session.getLastAccessedTime());
+
+        String first = "欢迎来到米奇妙妙屋！";
+        String second = "欢迎回来！";
+
+        int visitCount = 0;
+
+        resp.setContentType("text/html; charset=utf-8");
+        PrintWriter out = resp.getWriter();
+        if(session.isNew()){
+            out.println(
+                    "<h2>" + first + "</h2>" +
+                            "<br/>" + "访问次数：" +
+                            visitCount +
+                            "<br/>" + "创建时间：" +
+                            creatTime +
+                            "<br/>" + "最后访问时间： " +
+                            lastAccessTime
+            );
+        }
+       else{
+            ++visitCount;
+            out.println(
+                    "<h2>" + second + "</h2>" +
+                            "<br/>" + "访问次数：" +
+                            visitCount +
+                            "<br/>" + "创建时间：" +
+                            creatTime +
+                            "<br/>" + "最后访问时间： " +
+                            lastAccessTime
+            );
+
+        }
+        }
+    }
+```
+
+### Filter(过滤器)
+
++ 作用
+
+  + 动态地拦截请求和响应，变换或使用包含在请求或响应中的信息
+  + 在客户端的请求访问后端资源之前，拦截这些请求
+  + 在服务端的响应发送回客户端之前，处理这些请求
+
++ 生命周期
+
+  + init: 在容器初始化的时候调用一次
+  + doFilter:只要命中过滤规则就触发
+  + destory:容器销毁的时候调用一次
+
+  ```java
+  public interface Filter {
+      default void init(FilterConfig filterConfig) throws ServletException {
+      }
+  
+      void doFilter(ServletRequest var1, ServletResponse var2, FilterChain var3) throws IOException, ServletException;
+  
+      default void destroy() {
+      }
+  }
+  
+  ```
+
++ FilterChain类
+
+  ```java
+  void doFilter(ServletRequest request, ServletResponse response)
+  //Causes the next filter in the chain to be invoked, or if the calling filter is the last filter in the chain, causes the resource at the end of the chain to be invoked
+  //简单点来说调用此方法时可以跳过当前过滤
+  ```
+
++ @WebFilter
+
+  ```
+  //该Filter是否支持异步操作模式
+  asyncSupported      
+  //指定Filter对那种dispatcher模式进行过滤 该属性支持 Async,Error Forward,include,request  
+  dispatcherType  
+  //Filter 显示的名称
+  displayName    
+  ​
+  //Filter的名称
+  filterName    
+  ​
+  //Filter的配置参数
+  initParams    
+  ​
+  //过滤的Servlet可以指定多个,表示对这几个特定的的servlet 进行过滤
+  servletNames    
+  ​
+  //指定 Filter拦截的 URL，和上面的servletNames配置一样，用*可以表示通配符，但是不用字母后加*，应该按照模块划分，比如/user/*
+  urlPatterns/value    
+  ```
+
+#### Filter配置参数
+
++ FilterConfig类
+
+  | **Method Summary**       |                                                              |
+  | ------------------------ | ------------------------------------------------------------ |
+  | ` java.lang.String`      | **getFilterName()**    Returns the filter-name of this filter as defined in the deployment descriptor. |
+  | ` java.lang.String`      | **[getInitParameter](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/FilterConfig.html#getInitParameter(java.lang.String))**(java.lang.String name)      Returns a `String` containing the value of the named initialization parameter, or `null` if the parameter does not exist. |
+  | ` java.util.Enumeration` | **[getInitParameterNames](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/FilterConfig.html#getInitParameterNames())**()    Returns the names of the filter's initialization parameters as an `Enumeration` of `String` objects, or an empty `Enumeration` if the filter has no initialization parameters. |
+  | ` ServletContext`        | **[getServletContext](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/FilterConfig.html#getServletContext())**()      Returns a reference to the [`ServletContext`](https://tomcat.apache.org/tomcat-5.5-doc/servletapi/javax/servlet/ServletContext.html) in which the caller is executing. |
+
+
+
++ dispatcherTypes 参数
+  + 指定Filter对那种dispatcher模式进行过滤，不符合的则不进行过滤
+  + REQUEST：默认值，浏览器直接请求的资源会被过滤器拦截
+  + FORWARD：转发访问资源会被过滤器拦截
+  + INCLUDE：包含访问资源
+  + ERROR：错误跳转资源
+  + ASYNC：异步访问资源
+
+#### 用户登录访问个人页面拦截（实例）
+
++ LoginController
++ UserController
++ LogoutController
++ LoginFilterController
++ login.jsp
++ user.jsp
+
+
+
+逻辑：
+
+1. 新用户直接访问user.jsp会被拦截
+2. 登录错误会要求重新登录，登录成功会显示个人信息
+3. 登录成功后关闭页面，可直接访问user.jsp无需再次登录
+4. 注销后，重新访问user.jsp会跳转到login.jsp
+
+
+
+### Listener(监听器)
+
+可以理解为一个实现了Listener接口的的类，当被监听对象发生某些改变时，会执行相应的操作,（设计模式中的Listener模式？）
+
++ Servlet中与Listener有关的类：
+  + HttpSessionListener
+  + HttpSessionBindingListener
+  + HttpSessionAttributeListener
+  + ServletContextListener
+  + ServletContextAttributeListener
+  + ServletRequestLisener
+  + ServletRequestAttributeListener
+
+#### ServletContextListener
+
+实现的方法(参考[servlet4.0文档](https://javaee.github.io/javaee-spec/javadocs/javax/servlet/ServletContextListener.html))：
+
++ 在web.xml中声明
++ 添加WebListener注解
++ 在ServletContext通过addListener方法register(注册？)
+
+method:
+
++ contextDestroyed(ServletContextEvent sce):Receives notification that the ServletContext is about to be shut down.
+
+
+
++ contextInitialized(ServletContextEvent sce): Receives notification that the web application initialization process is starting.
+
+  所有的ServletContextListener在context一初始化时就会收到信息，并且会在filters和servlet初始化之前
+
+#### ServletContextAttributeListener
+
+method:
+
++ attributedAdded(ServletContextAttributeEvent envent)
++ attributedRemoved(ServletContextAttributeEvent envent)
++ attributedReplaced(ServletContextAttributeEvent envent)
+
+#### HttpSessionListener
+
+
+
+#### ServletRequestListener
+
+
+
+### 文件上传下载
+
+MultipartConfig
+
++ 前端：
+  + 必须是post方法
+
 ## 附录
 
 #### idea快捷键：[cnblog](https://www.cnblogs.com/hkgov/p/12209317.html#:~:text=IntelliJ%20IDEA%20%E5%BF%AB%E6%8D%B7%E9%94%AE%201%20Editing%20%28%E7%BC%96%E8%BE%91%29%202%20Search%2FReplace,...%209%20Live%20Templates%20%28%E5%8A%A8%E6%80%81%E6%A8%A1%E6%9D%BF%29%2010%20General%20%28%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%29)
